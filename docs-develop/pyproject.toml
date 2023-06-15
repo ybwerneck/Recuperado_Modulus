@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "modulus docs"
+version = "22.07"
+description = "NVIDIA Modulus is a neural network framework that blends the power of physics in the form of governing partial differential equations (PDEs) with data to build high-fidelity, parameterized surrogate models with near-real-time latency. Whether you’re looking to get started with AI-driven physics problems or designing digital twin models for complex non-linear, multi-physics systems, NVIDIA Modulus can support your work."
+readme = "README.md"
+authors = ["Modulus Team"]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4"
+black = "22.6.0"
+chaospy = "^4.3.7"
+click = "8.0.4"
+Cython = "0.29.28"
+einops = "0.4.1"
+future = "0.18.2"
+h5py = "3.6.0"
+hydra-core = "1.1.1"
+matplotlib = "3.5.1"
+numpy = "1.22.3"
+numpy-stl = "2.16.3"
+omegaconf = "2.1.1"
+opencv-python = "4.5.5.64"
+pytest = "7.1.1"
+scikit-learn = "1.0.2"
+symengine = "0.6.1"
+sympy = "1.5.1"
+termcolor = "1.1.0"
+timm = "0.5.4"
+torch-optimizer = "0.3.0"
+transforms3d = "0.3.1"
+typing = "3.7.4.3"
+vtk = "9.1.0"
+pillow = "9.0.1"
+notebook= "6.4.12"
+# mistune = "2.0.3"
+torch = {path = "/opt/pytorch/pytorch/"}
+pint = "0.19.2"
+# Doc imports
+recommonmark = "0.7.1"
+sphinx = "5.1.1"
+sphinx-rtd-theme = "1.0.0"
+pydocstyle = "6.1.1"
+nbsphinx = "0.8.9"
+nbconvert = "6.4.3"
+jinja2 = "3.0.3"
+# CI/CD
+GitPython = "3.1.27"
+pytz = "2022.1"
+python-gitlab = "3.5.0"
+pyspellchecker = "0.6.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+

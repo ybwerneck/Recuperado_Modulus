@@ -1,0 +1,80 @@
+﻿# exclude local website repo, used for publishing
+public/
+
+.lastrun
+.lastformat
+.lastverify
+.DS_Store
+**/.vscode/ipch
+*.swp
+*.swo
+
+# byte-compiled python files
+*.py[cod]
+
+# packman package files
+*@*.7z
+*@*.zip
+*@*.txt
+
+# packaged unittest archives
+/test_binaries-*.zip
+/tests-*.zip
+/run_tests.*
+run_python_tests.bat
+*.sh1
+
+# patch files
+*.diff
+*.patch
+
+# binaries
+*.ico
+*.bmp
+*.png
+*.gif
+*.jpg
+*.jpeg
+*.tga
+*.psd
+*.raw
+*.exr
+*.hdr
+*.dds
+*.ktx
+*.spv
+*.dxbc
+*.dxil
+*.gltf
+*.glb
+*.fbx
+*.usd
+*.usda
+*.usdz
+*.obj
+*.mat
+
+*.suo
+
+# packman .user config
+*.packman.xml.user
+
+# ignore build folder
+_build/*
+
+# allow anything in folders under Git LFS management
+!docs/content/**
+!images/**
+!user_guide/images/user_guide/**
+!install_guide/images/user_guide/**
+!*.ico
+!source/content/**
+!user_guide/content/**
+!install_guide/content/**
+
+/.vs
+
+# VSCode
+.vscode/
+
+PACKAGE-LICENSES/

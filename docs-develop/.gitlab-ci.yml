@@ -1,0 +1,112 @@
+# Official language image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python/tags/
+# Get image from gitlab registery
+# Need to auth runner:
+# https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#configure-a-job
+image: $CI_REGISTRY_IMAGE:$CI_REGISTRY_IMAGE_TAG
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+stages:
+  - build
+  - test
+  - deploy
+  - tasks
+
+cache:
+  paths:
+    - './warnings.txt'
+    - './_build'
+
+# == Build Sphinx HTML files ==
+build html:
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$TARGET_TASK_NAME'
+      when: never
+    - if: '$DEPLOY_NAME'
+  tags:
+    - docs
+  variables:
+     GIT_SUBMODULE_STRATEGY: normal
+  before_script:
+    - pwd
+    # I do have concerns with LFS here, may cause issues with pulls
+    - export GIT_LFS_SKIP_SMUDGE=1
+    - git submodule update --init
+    - git submodule foreach git reset --hard
+    - make install
+  script:
+    - rm -rf _build
+    - rm -rf warnings.txt
+    - python test/build_html.py
+
+# == Check error log file for sphinx build issues ==
+test html:
+  stage: test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$TARGET_TASK_NAME'
+      when: never
+    - if: '$DEPLOY_NAME'
+  tags:
+    - docs
+  needs: ["build html"]
+  before_script:
+    - pwd
+  script:
+    - python test/test_html.py
+
+# == Check spelling of UG RST files ==
+test spelling:
+  stage: test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$TARGET_TASK_NAME'
+      when: never
+    - if: '$DEPLOY_NAME'
+  tags:
+    - docs
+  needs: ["build html"]
+  before_script:
+    - pwd
+  script:
+    - python test/test_spelling.py
+
+# == Nightly deploys to internal gitlab pages ==
+pages:
+  stage: deploy
+  rules:
+    - if: '$DEPLOY_NAME == "nightly"'
+    - if: '$TARGET_TASK_NAME'
+      when: never
+  tags:
+    - docs
+  needs: ["build html", "test html"]
+  script:
+    - mv ./_build/html ./public
+  artifacts:
+    paths:
+    - public
+
+# == Overwatch example repo for code block changes ==
+overwatch examples:
+  stage: tasks
+  tags:
+    - docs
+  needs: []
+  rules:
+    - if: '$TARGET_TASK_NAME == "overwatch_examples" && $OW_DAY_RANGE'
+  before_script:
+    - pwd
+    - cd external
+    - rm -rfv examples/ # Completely delete examples repo and reclone (avoid LFS issues)
+    - export GIT_LFS_SKIP_SMUDGE=1 
+    - git clone --branch develop "https://gitlab-ci-token:${CI_CLONE_TOKEN}@gitlab-master.nvidia.com/modulus/examples.git"
+    - cd ..
+  script:
+    - python test/overwatch.py --gitlab-token ${CI_API_TOKEN} --day-range ${OW_DAY_RANGE}

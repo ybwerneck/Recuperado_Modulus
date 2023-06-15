@@ -1,0 +1,6 @@
+[submodule "Modulus"]
+	path = external/Modulus
+	url = ../../modulus/Modulus.git
+[submodule "examples"]
+	path = external/examples
+	url = ../../modulus/examples.git
